@@ -21,7 +21,7 @@
   "scripts": {
     "start": "node node_modules/react-scripts/bin/react-scripts.js start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "node node_modules/react-scripts/bin/react-scripts.js test",
     "test:ci": "react-scripts test --watchAll=false"
   },
   "eslintConfig": {
