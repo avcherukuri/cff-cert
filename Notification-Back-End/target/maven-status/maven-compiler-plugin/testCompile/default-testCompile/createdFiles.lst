@@ -1,0 +1,6 @@
+com\company\notification\controller\NotificationPreferencesControllerTest.class
+com\company\notification\validation\AtLeastOneFieldPresentValidatorTest.class
+com\company\notification\mapper\NotificationPreferencesMapperTest.class
+com\company\notification\service\impl\NotificationPreferencesServiceImplTest.class
+com\company\notification\security\TestUserPrincipal.class
+com\company\notification\exception\GlobalExceptionHandlerTest.class
