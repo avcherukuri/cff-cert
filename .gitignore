@@ -1,0 +1,6 @@
+Planing mode 3.4 & 3.5/.claude
+Planing mode 3.4 & 3.5\Notification-Back-End\data
+
+# Ignore H2 database files
+*.mv.db
+*.trace.db
