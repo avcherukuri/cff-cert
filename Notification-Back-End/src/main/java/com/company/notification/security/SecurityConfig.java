@@ -2,6 +2,7 @@ package com.company.notification.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -28,9 +29,12 @@ import java.util.List;
 public class SecurityConfig {
 
     private final Environment environment;
+    private final String corsAllowedOrigin;
 
-    public SecurityConfig(Environment environment) {
+    public SecurityConfig(Environment environment,
+                           @Value("${notification.cors.allowed-origin}") String corsAllowedOrigin) {
         this.environment = environment;
+        this.corsAllowedOrigin = corsAllowedOrigin;
     }
 
     @Bean
@@ -57,7 +61,7 @@ public class SecurityConfig {
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of(corsAllowedOrigin));
         configuration.setAllowedMethods(List.of("GET", "PUT", "PATCH", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type", "X-XSRF-TOKEN"));
         configuration.setAllowCredentials(true);

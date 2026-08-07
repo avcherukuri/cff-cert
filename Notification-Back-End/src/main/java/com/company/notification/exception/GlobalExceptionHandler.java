@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,6 +41,20 @@ public class GlobalExceptionHandler {
         ValidationErrorResponse body = ValidationErrorResponse.of(
                 HttpStatus.CONFLICT.value(), "CONFLICT", ex.getMessage(), List.of());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ValidationErrorResponse> handleMalformedRequestBody(HttpMessageNotReadableException ex) {
+        ValidationErrorResponse body = ValidationErrorResponse.of(
+                HttpStatus.BAD_REQUEST.value(), "MALFORMED_REQUEST", "Request body is missing or malformed", List.of());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ValidationErrorResponse> handleUnauthenticated(IllegalStateException ex) {
+        ValidationErrorResponse body = ValidationErrorResponse.of(
+                HttpStatus.UNAUTHORIZED.value(), "UNAUTHENTICATED", "Authentication is required", List.of());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
     }
 
     @ExceptionHandler(Exception.class)

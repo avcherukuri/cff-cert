@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.util.Optional;
@@ -127,6 +128,17 @@ class NotificationPreferencesServiceImplTest {
     void replacePreferences_translatesOptimisticLockFailure() {
         when(repository.findByUserId(USER_ID)).thenReturn(Optional.empty());
         when(repository.save(any())).thenThrow(new ObjectOptimisticLockingFailureException(UserNotificationPreference.class, USER_ID));
+
+        var request = new NotificationPreferencesUpdateRequest(true, true, true);
+
+        assertThatThrownBy(() -> service.replacePreferences(USER_ID, request))
+                .isInstanceOf(OptimisticLockConflictException.class);
+    }
+
+    @Test
+    void replacePreferences_translatesUniqueConstraintViolation_onConcurrentFirstWrite() {
+        when(repository.findByUserId(USER_ID)).thenReturn(Optional.empty());
+        when(repository.save(any())).thenThrow(new DataIntegrityViolationException("duplicate key value violates unique constraint"));
 
         var request = new NotificationPreferencesUpdateRequest(true, true, true);
 

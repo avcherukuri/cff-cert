@@ -8,6 +8,7 @@ import com.company.notification.exception.OptimisticLockConflictException;
 import com.company.notification.mapper.NotificationPreferencesMapper;
 import com.company.notification.repository.UserNotificationPreferencesRepository;
 import com.company.notification.service.NotificationPreferencesService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,8 @@ public class NotificationPreferencesServiceImpl implements NotificationPreferenc
             return repository.save(entity);
         } catch (ObjectOptimisticLockingFailureException ex) {
             throw new OptimisticLockConflictException("Preferences were updated elsewhere, please retry", ex);
+        } catch (DataIntegrityViolationException ex) {
+            throw new OptimisticLockConflictException("Preferences were created elsewhere, please retry", ex);
         }
     }
 }

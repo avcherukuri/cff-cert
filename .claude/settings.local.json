@@ -4,7 +4,11 @@
       "Bash(/c/Program Files/PostgreSQL/18/bin/pg_ctl.exe reload *)",
       "Read(//c/Program Files/**)",
       "Read(//c/Program Files \\\\\\(x86\\\\\\)/**)",
-      "Bash(mvn spring-boot:run)"
+      "Bash(mvn spring-boot:run)",
+      "Bash(command -v gh)",
+      "Bash(gh --version)",
+      "Bash(npx react-scripts *)",
+      "Bash(CI=true node node_modules/react-scripts/bin/react-scripts.js test --watchAll=false --testPathPattern=\"NotificationPreferencesForm|ToggleControl\")"
     ]
   }
 }

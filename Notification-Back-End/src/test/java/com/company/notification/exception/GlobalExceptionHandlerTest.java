@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -57,7 +59,27 @@ class GlobalExceptionHandlerTest {
         ResponseEntity<ValidationErrorResponse> response = handler.handleUnexpected(new RuntimeException("secret internal detail"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        // assertThat(response.getBody().message()).isEqualTo("An unexpected error occurred");
-        // assertThat(response.getBody().message()).doesNotContain("secret internal detail");
+        assertThat(response.getBody().message()).isEqualTo("An unexpected error occurred");
+        assertThat(response.getBody().message()).doesNotContain("secret internal detail");
+    }
+
+    @Test
+    void handleMalformedRequestBody_returns400() {
+        var ex = new HttpMessageNotReadableException("JSON parse error", mock(HttpInputMessage.class));
+
+        ResponseEntity<ValidationErrorResponse> response = handler.handleMalformedRequestBody(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody().message()).doesNotContain("JSON parse error");
+    }
+
+    @Test
+    void handleUnauthenticated_returns401() {
+        var ex = new IllegalStateException("No authenticated AuthenticatedUserPrincipal in the security context");
+
+        ResponseEntity<ValidationErrorResponse> response = handler.handleUnauthenticated(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody().message()).isEqualTo("Authentication is required");
     }
 }
